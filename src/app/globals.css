@@ -1,0 +1,427 @@
+@import "tailwindcss";
+
+/* ============================================================
+   PASARGAD — BRAND SYSTEM
+   Warm cream canvas · logo crimson & gold · saffron heat
+   ------------------------------------------------------------
+   Surfaces and text are SEMANTIC tokens (canvas / card / ink /
+   muted / line). Swapping the six values in the first block
+   re-themes the whole site.
+   ============================================================ */
+
+@theme {
+  /* ---- Semantic surfaces ---- */
+  --color-canvas:    #fdf8f0;   /* page */
+  --color-canvas-2:  #f8efdf;   /* alternating band */
+  --color-card:      #ffffff;   /* raised card */
+  --color-sand:      #f4e7d3;   /* subtle fill, inputs */
+  --color-sand-2:    #ecd9bd;   /* pressed / hover fill */
+
+  /* ---- Semantic text ---- */
+  --color-ink:       #221310;   /* warm near-black, headings */
+  --color-ink-soft:  #4a332b;   /* body */
+  --color-muted:     #7b6156;   /* secondary */
+  --color-faint:     #a4907f;   /* captions, meta */
+
+  /* ---- Semantic lines ---- */
+  --color-line:        #ead9c0;
+  --color-line-strong: #dcc39f;
+
+  /* ---- Logo crimson ---- */
+  --color-crimson-50:  #fdedec;
+  --color-crimson-100: #f9d5d3;
+  --color-crimson-300: #e2726c;
+  --color-crimson-400: #d1453f;
+  --color-crimson-500: #c1272d;
+  --color-crimson-600: #a11a23;
+  --color-crimson-700: #7d121b;
+
+  /* ---- Logo gold ---- */
+  --color-gold-100: #fbf0d6;
+  --color-gold-200: #f6e0ad;
+  --color-gold-300: #efc978;
+  --color-gold-400: #e0ab3e;
+  --color-gold-500: #c8912a;
+  --color-gold-600: #a4741d;
+  --color-gold-700: #7d5713;
+
+  /* ---- Saffron heat ---- */
+  --color-saffron-100: #fdeed4;
+  --color-saffron-300: #ffcd7a;
+  --color-saffron-400: #ffb63f;
+  --color-saffron-500: #f5a524;
+  --color-saffron-600: #d5810c;
+  --color-saffron-700: #8f5107;
+
+  /* ---- Ember / chilli ---- */
+  --color-ember-100: #fde7de;
+  --color-ember-300: #ff9a72;
+  --color-ember-400: #f2683c;
+  --color-ember-500: #e4572e;
+  --color-ember-600: #ab3416;
+
+  /* ---- Cardamom (veg markers) ---- */
+  --color-cardamom-100: #e4f2e2;
+  --color-cardamom-400: #4fa05c;
+  --color-cardamom-500: #3c8248;
+  --color-cardamom-600: #2d6437;
+
+  /* ---- Type ---- */
+  --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* ---- Radii ---- */
+  --radius-xl2: 1.75rem;
+  --radius-xl3: 2.5rem;
+
+  /* ---- Motion ---- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ---- Elevation (warm, never grey) ---- */
+  --shadow-card: 0 2px 4px -2px rgba(93, 52, 32, 0.08), 0 12px 28px -12px rgba(93, 52, 32, 0.14);
+  --shadow-lift: 0 8px 16px -8px rgba(93, 52, 32, 0.14), 0 28px 56px -20px rgba(93, 52, 32, 0.22);
+  --shadow-glow: 0 14px 40px -12px rgba(245, 165, 36, 0.55);
+  --shadow-glow-red: 0 14px 40px -12px rgba(193, 39, 45, 0.4);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+:root {
+  color-scheme: light;
+  --nav-h: 76px;
+}
+
+* { border-color: var(--color-line); }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+  background: var(--color-canvas);
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink-soft);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv02", "cv11";
+  overflow-x: clip;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--color-saffron-400); color: var(--color-ink); }
+
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: var(--color-canvas-2); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--color-saffron-500), var(--color-crimson-500));
+  border-radius: 99px;
+  border: 3px solid var(--color-canvas-2);
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+/* The display stack is written out in full rather than going through
+   `var(--font-display)`. One less level of custom-property indirection to
+   get wrong, and a real serif fallback while Fraunces is still loading. */
+.font-display,
+.display-xl,
+.display-lg,
+.display-md {
+  font-family: var(--font-fraunces), "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-optical-sizing: auto;
+}
+
+.display-xl {
+  font-weight: 600;
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  font-size: clamp(2.6rem, 7.4vw, 6.6rem);
+  color: var(--color-ink);
+}
+.display-lg {
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-size: clamp(2rem, 4.6vw, 4.2rem);
+  color: var(--color-ink);
+}
+.display-md {
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.7rem, 3.2vw, 2.8rem);
+  color: var(--color-ink);
+}
+.eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-crimson-500);
+}
+
+/* ============================================================
+   BRAND SURFACES
+   ============================================================ */
+.text-gradient-gold {
+  background: linear-gradient(96deg, #c1272d 0%, #e0632a 38%, #e0ab3e 72%, #c8912a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-gradient-sun {
+  background: linear-gradient(96deg, #f5a524 0%, #e4572e 55%, #c1272d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* A word that is mid-animation has a transform, which makes it its own
+   stacking context — and an ancestor's `background-clip: text` cannot paint
+   into a separate stacking context, so the word turns invisible. Give the
+   word its own copy of the gradient.
+   Stated explicitly rather than with `inherit`: `inherit` reads the immediate
+   parent (.split-line), which has no background, not the gradient ancestor. */
+.text-gradient-sun .split-word {
+  background-image: linear-gradient(96deg, #f5a524 0%, #e4572e 55%, #c1272d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-gradient-gold .split-word {
+  background-image: linear-gradient(96deg, #c1272d 0%, #e0632a 38%, #e0ab3e 72%, #c8912a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-sun { background: linear-gradient(100deg, #ffb63f 0%, #f5a524 42%, #e4572e 100%); }
+
+/* ============================================================
+   WARM WASH
+   Applied directly to the hero <section>/<header> as its own
+   background — not as an `absolute inset-0 -z-10` overlay. A
+   negative-z-index child is at the mercy of whatever ancestor
+   happens to create a stacking context; a background on the
+   element itself always paints.
+   ============================================================ */
+.wash {
+  background-color: var(--color-canvas);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='124' viewBox='0 0 72 124'%3E%3Cg fill='none' stroke='%23c1272d' stroke-width='1.1' opacity='.085'%3E%3Cpath d='M36 4c17.7 0 32 14.3 32 32v52c0 17.7-14.3 32-32 32S4 105.7 4 88V36C4 18.3 18.3 4 36 4Z'/%3E%3Cpath d='M36 24c8.8 0 16 7.2 16 16v44c0 8.8-7.2 16-16 16s-16-7.2-16-16V40c0-8.8 7.2-16 16-16Z'/%3E%3Ccircle cx='36' cy='62' r='4'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(62rem 50rem at 10% 4%,
+      rgba(255, 190, 80, 0.95), rgba(255, 190, 80, 0.38) 40%, rgba(255, 190, 80, 0) 72%),
+    radial-gradient(48rem 44rem at 94% 14%,
+      rgba(246, 178, 172, 0.92), rgba(246, 178, 172, 0.3) 42%, rgba(246, 178, 172, 0) 74%),
+    radial-gradient(54rem 46rem at 44% 112%,
+      rgba(245, 203, 126, 0.95), rgba(245, 203, 126, 0.32) 42%, rgba(245, 203, 126, 0) 76%),
+    linear-gradient(158deg, rgba(255, 226, 180, 0.98), rgba(253, 248, 240, 0) 60%);
+  background-size: 58px 100px, auto, auto, auto, auto;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+}
+
+/* Warm highlight for the crimson panels, layered over the red gradient. */
+.bg-crimson-grad {
+  background-image:
+    radial-gradient(38rem 26rem at 22% -10%, rgba(255, 196, 92, 0.42), rgba(255, 196, 92, 0) 70%),
+    radial-gradient(30rem 24rem at 88% 110%, rgba(255, 138, 61, 0.36), rgba(255, 138, 61, 0) 70%),
+    linear-gradient(100deg, #d1453f 0%, #c1272d 55%, #a11a23 100%);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lift);
+}
+
+/* Floating hero chips — solid, so no backdrop-filter layer per chip. */
+.chip {
+  background: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lift);
+}
+
+/* Navigation drops in on load — CSS, so the nav can never be stranded
+   invisible if hydration is slow or fails. */
+@keyframes nav-drop {
+  from { transform: translate3d(0, -80px, 0); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0);     opacity: 1; }
+}
+.nav-in { animation: nav-drop 0.8s var(--ease-out-expo) 0.1s both; }
+
+/* Generic staggered entrance. `backwards` fill so nothing is left holding a
+   transform (which would create a stacking context) once it has played. */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.stagger-in { animation: rise-in 0.5s var(--ease-out-expo) var(--d, 0s) backwards; }
+
+/* Small label swap inside buttons */
+@keyframes pop-in { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+.pop { animation: pop-in 0.28s var(--ease-out-expo) both; }
+
+/* Gentle idle float. Transform only, so it stays on the compositor. */
+@keyframes bob { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -10px, 0); } }
+.float-a { animation: bob 6s ease-in-out infinite; }
+.float-b { animation: bob 7.5s ease-in-out infinite 0.6s; }
+.float-c { animation: bob 5.4s ease-in-out infinite 1.1s; }
+
+.card-sheen { position: relative; isolation: isolate; overflow: hidden; }
+.card-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(245, 165, 36, 0.16),
+    transparent 62%
+  );
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-out-expo);
+  pointer-events: none;
+  z-index: 2;
+}
+.card-sheen:hover::after { opacity: 1; }
+
+.rule-gold {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-line-strong), transparent);
+}
+
+/* Paper grain — static. The animated version repainted a full-screen
+   blended layer every frame and was one of the biggest scroll costs. */
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.03;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   REVEALS
+   Text and blocks ship VISIBLE. JavaScript may hide-then-animate
+   something that is below the fold, but nothing depends on JS to
+   become readable.
+   ============================================================ */
+
+/* --- Per-word headline reveal (pure CSS, no JS at all) --- */
+.split { display: inline-block; }
+.split-line {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.08em;
+}
+.split-word {
+  display: inline-block;
+  /* `backwards`, not `both`: with `both` the element keeps `translateY(0)`
+     forever, and a non-none transform creates a stacking context that breaks
+     `background-clip: text` on gradient headings. `backwards` holds the
+     hidden state during the delay, then hands back to the normal styles. */
+  animation: word-rise 0.9s var(--ease-out-expo) var(--d, 0s) backwards;
+}
+@keyframes word-rise {
+  from { transform: translateY(105%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* --- Block reveal (JS adds rv-hidden only when below the fold) --- */
+.rv { opacity: 1; }
+.rv-hidden {
+  opacity: 0;
+  transform: translateY(22px);
+}
+.rv-hidden.rv-in,
+.rv-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s var(--ease-out-expo) var(--rv-delay, 0s),
+    transform 0.7s var(--ease-out-expo) var(--rv-delay, 0s);
+}
+.rv-group.rv-hidden > * { opacity: 0; transform: translateY(18px); }
+.rv-group.rv-in > * {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+}
+.rv-group.rv-in > *:nth-child(1) { transition-delay: calc(var(--rv-stagger, .07s) * 0) }
+.rv-group.rv-in > *:nth-child(2) { transition-delay: calc(var(--rv-stagger, .07s) * 1) }
+.rv-group.rv-in > *:nth-child(3) { transition-delay: calc(var(--rv-stagger, .07s) * 2) }
+.rv-group.rv-in > *:nth-child(4) { transition-delay: calc(var(--rv-stagger, .07s) * 3) }
+.rv-group.rv-in > *:nth-child(5) { transition-delay: calc(var(--rv-stagger, .07s) * 4) }
+.rv-group.rv-in > *:nth-child(n+6) { transition-delay: calc(var(--rv-stagger, .07s) * 5) }
+
+/* Scroll rail without a visible scrollbar (the arrow buttons drive it). */
+.no-bar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-bar::-webkit-scrollbar { display: none; }
+
+/* Below-the-fold sections skip layout and paint until near the viewport. */
+.defer { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+
+/* Photo grade — lifts saturation, keeps food looking hot and fresh */
+.grade { filter: saturate(1.16) contrast(1.05) brightness(1.02); }
+.grade-wrap { position: relative; isolation: isolate; }
+.grade-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(150deg, rgba(255, 182, 63, 0.14), rgba(193, 39, 45, 0.06) 60%, transparent);
+  pointer-events: none;
+}
+/* Use when text sits on top of a photo */
+.grade-wrap.on-photo::after {
+  background:
+    linear-gradient(180deg, rgba(34, 19, 16, 0) 42%, rgba(34, 19, 16, 0.68) 100%),
+    linear-gradient(150deg, rgba(255, 182, 63, 0.16), transparent 60%);
+}
+
+/* Marquee — transform only, promoted once */
+@keyframes marquee { to { transform: translate3d(-50%, 0, 0); } }
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--dur, 42s) linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.spin-slow { animation: spin-slow 34s linear infinite; }
+
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-crimson-500);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Never leave a reveal mid-flight when motion is off. */
+  .split-word { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .rv-hidden { opacity: 1 !important; transform: none !important; }
+  .rv-group.rv-hidden > * { opacity: 1 !important; transform: none !important; }
+}
+
+/* Safety net: if JS never runs, hidden classes are never added — but if a
+   stylesheet loads before hydration, make sure nothing can strand content. */
+@media (scripting: none) {
+  .split-word { animation: none; opacity: 1; transform: none; }
+}
+
+.lock { overflow: hidden; }

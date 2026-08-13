@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 190" role="img" aria-label="Pasargad Indian Cuisine"><title>Pasargad</title>
+  <g transform="translate(0 5) scale(0.92)">
+<g fill="none" stroke="#c1272d" stroke-width="10.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M68 68V168"/>
+      <path d="M68 68c0-21 21-33 45-33 26 0 44 20 44 47 0 26-18 44-44 44-9 0-16-2-21-6"/>
+    </g>
+    <g fill="none" stroke="#f5a524" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M104 45v28M116 45v28M128 45v28" stroke-width="4"/>
+      <path d="M104 73h24" stroke-width="4"/>
+      <path d="M116 73v45" stroke-width="4.6"/>
+    </g>
+    <g>
+      <path d="M76 56C59 58 39 47 31 26c23-6 41 9 45 30Z" fill="#f5a524"/>
+      <path d="M79 53c-5-17 3-34 20-40 6 19-2 36-20 40Z" fill="none" stroke="#f5a524" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M83 45c4-11 10-19 16-24" fill="none" stroke="#f5a524" stroke-width="3" stroke-linecap="round"/>
+    </g>
+  </g>
+  <text x="196" y="106" font-family="Fraunces, 'Playfair Display', Georgia, serif" font-size="78" font-weight="500" fill="#c1272d">Pasargad</text>
+  <text x="200" y="140" font-family="Inter, system-ui, sans-serif" font-size="13.5" font-weight="600" fill="#f5a524" letter-spacing="2.5">TASTE. QUALITY. TRADITION.</text>
+</svg>

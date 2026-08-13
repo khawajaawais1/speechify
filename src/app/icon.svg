@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Pasargad">
+  <rect width="64" height="64" rx="15" fill="#c1272d"/>
+  <g transform="translate(9.5 8) scale(0.26)">
+    <g fill="none" stroke="#ffffff" stroke-width="17" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M68 74V168"/>
+      <path d="M68 74c0-23 21-36 45-36 26 0 44 21 44 49 0 27-18 45-44 45-9 0-16-2-21-6"/>
+    </g>
+    <g fill="none" stroke="#ffc45c" stroke-linecap="round">
+      <path d="M104 54v28M117 54v28M130 54v28" stroke-width="8"/>
+      <path d="M104 82h26" stroke-width="8"/>
+      <path d="M117 82v40" stroke-width="9"/>
+    </g>
+  </g>
+</svg>

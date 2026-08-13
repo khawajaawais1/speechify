@@ -1,0 +1,330 @@
+export const LOCALES = ["en", "fi"] as const;
+export type Locale = (typeof LOCALES)[number];
+export const DEFAULT_LOCALE: Locale = "fi";
+
+export const isLocale = (v: string): v is Locale => (LOCALES as readonly string[]).includes(v);
+
+type Dict = Record<string, string>;
+
+const en: Dict = {
+  "tag.chef": "Chef",
+  "tag.veg": "Veg",
+  "tag.vegan": "Vegan",
+  "tag.hot": "Hot",
+  "cart.each": "each",
+  "a11y.home": "Pasargad — home",
+  "a11y.menu": "Menu",
+  "a11y.close": "Close",
+  "a11y.clear": "Clear",
+  "a11y.decrease": "Decrease quantity",
+  "a11y.increase": "Increase quantity",
+  "a11y.remove": "Remove from basket",
+  "a11y.call": "Call the restaurant",
+  "nf.title": "That page isn't on the menu",
+  "nf.body": "The link may be old, or the page has moved. Let's get you back to the good stuff.",
+  "nf.cta": "Back to home",
+
+  "nav.home": "Home",
+  "nav.menu": "Menu",
+  "nav.buffet": "Buffet",
+  "nav.shop": "Order Online",
+  "nav.reserve": "Reservations",
+  "nav.contact": "Contact",
+  "nav.order": "Order now",
+
+  "hero.eyebrow": "Jyväskylä · Since 2016",
+  "hero.l1": "A taste",
+  "hero.l2": "journey through",
+  "hero.l3": "India",
+  "hero.sub": "Clay-oven fire, slow-simmered spice and a buffet that changes every single day. Dine in at Ahjokatu 12, or have it at your door in 30 minutes.",
+  "hero.cta1": "Order online",
+  "hero.cta2": "See the menu",
+  "hero.scroll": "Scroll",
+
+  "stat.rating": "Guest rating",
+  "stat.eta": "Average delivery",
+  "stat.buffet": "Daily buffet from",
+  "stat.years": "Years in Jyväskylä",
+
+  "sec.signature.eyebrow": "Chef's selection",
+  "sec.signature.title": "Signature plates",
+  "sec.signature.sub": "The dishes our regulars order again and again — each one finished to order in the tandoor.",
+  "sec.signature.cta": "Browse the full menu",
+
+  "sec.buffet.eyebrow": "Every day",
+  "sec.buffet.title": "The buffet that never repeats",
+  "sec.buffet.body": "A new spread every day of the week — curries, biryani, tandoori, dal, fresh salads and desserts. Want it hotter, milder or a special vegetable dish? Just ask our staff. It's included in the buffet price, with no extra charge.",
+  "sec.buffet.kids": "Bringing the family? There's pizza and fries on the table too.",
+  "sec.buffet.cta": "See this week's buffet",
+
+  "sec.cats.eyebrow": "The kitchen",
+  "sec.cats.title": "Eleven menus, one kitchen",
+  "sec.cats.sub": "Indian classics, stone-baked pizza, kebab from the vertical grill and a full vegan line.",
+
+  "sec.story.eyebrow": "Our story",
+  "sec.story.title": "Cooked the long way, on purpose",
+  "sec.story.body": "Pasargad has been feeding Jyväskylä since 2016. Every curry starts with whole spices roasted and ground in-house, onions browned slowly, and meat marinated overnight before it ever meets the clay oven. We use fresh, high-quality ingredients — no shortcuts, no powders.",
+  "sec.story.body2": "We also cater. Birthdays, company parties and private events in our own dining room or delivered to your venue.",
+  "sec.story.cta": "Talk to us about catering",
+
+  "sec.reviews.title": "What our guests say",
+  "sec.reviews.basedOn": "Based on",
+  "sec.reviews.count": "reviews",
+  "sec.reviews.more": "Read more",
+  "sec.reviews.less": "Show less",
+  "sec.reviews.read": "Read on Tripadvisor",
+  "sec.reviews.prev": "Previous reviews",
+  "sec.reviews.next": "More reviews",
+  "sec.reviews.ctaBtn": "Review us on Google",
+
+  "sec.gallery.eyebrow": "The room",
+  "sec.gallery.title": "Come sit with us",
+
+  "sec.order.eyebrow": "Delivery & pickup",
+  "sec.order.title": "Hot at your door in 30 minutes",
+  "sec.order.f1": "Free delivery within 5 km",
+  "sec.order.f1s": "7 km for €5 · free over €50",
+  "sec.order.f2": "Pay how you like",
+  "sec.order.f2s": "Card, Apple Pay, Google Pay, MobilePay",
+  "sec.order.f3": "Pickup in 30 minutes",
+  "sec.order.f3s": "Minimum €10 for pickup, €23 for delivery",
+
+  "sec.faq.title": "Good to know",
+
+  "cta.final.title": "Hungry yet?",
+  "cta.final.sub": "Build your order in under a minute.",
+
+  "shop.title": "Order Online",
+  "shop.sub": "Pick your dishes, choose pickup or delivery, pay securely. We start cooking the moment your order lands.",
+  "shop.search": "Search dishes…",
+  "shop.all": "All",
+  "shop.filters": "Filters",
+  "shop.empty": "Nothing matches that. Try another search.",
+  "shop.add": "Add",
+  "shop.added": "Added",
+  "shop.from": "from",
+
+  "cart.title": "Your order",
+  "cart.empty": "Your basket is empty.",
+  "cart.emptySub": "Add something delicious and it'll show up here.",
+  "cart.browse": "Browse the menu",
+  "cart.subtotal": "Subtotal",
+  "cart.delivery": "Delivery",
+  "cart.service": "Service fee",
+  "cart.total": "Total",
+  "cart.checkout": "Checkout securely",
+  "cart.pickup": "Pickup",
+  "cart.deliver": "Delivery",
+  "cart.free": "Free",
+  "cart.min": "Minimum order",
+  "cart.minWarn": "Add {amount} more to reach the {mode} minimum.",
+  "cart.freeHint": "Add {amount} more for free delivery.",
+  "cart.clear": "Clear basket",
+  "cart.items": "items",
+  "cart.item": "item",
+  "cart.when": "When",
+  "cart.asap": "As soon as possible",
+  "cart.note": "Notes for the kitchen",
+  "cart.notePlaceholder": "Allergies, spice level, doorbell…",
+  "cart.processing": "Redirecting to payment…",
+
+  "menu.title": "À la Carte",
+  "menu.sub": "Cooked to order. Mains are served with rice and naan.",
+  "buffet.title": "The Buffet",
+  "buffet.sub": "A different table every day of the week.",
+  "reserve.title": "Reserve a table",
+  "reserve.sub": "Tell us when, and we'll have it ready. For groups over 10 or catering, give us a call.",
+  "contact.title": "Find us",
+
+  "form.name": "Name",
+  "form.phone": "Phone",
+  "form.email": "Email",
+  "form.guests": "Guests",
+  "form.date": "Date",
+  "form.time": "Time",
+  "form.message": "Message",
+  "form.send": "Send request",
+  "form.sent": "Thanks — we'll confirm by phone shortly.",
+
+  "success.title": "Order confirmed",
+  "success.sub": "Thank you. We've received your payment and the kitchen is already on it.",
+  "success.back": "Back to home",
+  "cancel.title": "Payment cancelled",
+  "cancel.sub": "No money left your account. Your basket is still waiting for you.",
+  "cancel.back": "Return to your basket",
+
+  "hours.kitchen": "Kitchen",
+  "hours.delivery": "Delivery",
+  "footer.rights": "All rights reserved.",
+  "footer.built": "Fresh ingredients, every single day.",
+};
+
+const fi: Dict = {
+  "tag.chef": "Suosikki",
+  "tag.veg": "Kasvis",
+  "tag.vegan": "Vegaani",
+  "tag.hot": "Tulinen",
+  "cart.each": "kpl",
+  "a11y.home": "Pasargad — etusivu",
+  "a11y.menu": "Valikko",
+  "a11y.close": "Sulje",
+  "a11y.clear": "Tyhjennä",
+  "a11y.decrease": "Vähennä määrää",
+  "a11y.increase": "Lisää määrää",
+  "a11y.remove": "Poista ostoskorista",
+  "a11y.call": "Soita ravintolaan",
+  "nf.title": "Tätä sivua ei ole ruokalistalla",
+  "nf.body": "Linkki voi olla vanha tai sivu on siirtynyt. Palataan takaisin herkkujen pariin.",
+  "nf.cta": "Takaisin etusivulle",
+
+  "nav.home": "Etusivu",
+  "nav.menu": "Ruokalista",
+  "nav.buffet": "Buffet",
+  "nav.shop": "Tilaa verkosta",
+  "nav.reserve": "Pöytävaraus",
+  "nav.contact": "Yhteystiedot",
+  "nav.order": "Tilaa nyt",
+
+  "hero.eyebrow": "Jyväskylä · Vuodesta 2016",
+  "hero.l1": "Makumatka",
+  "hero.l2": "halki",
+  "hero.l3": "Intian",
+  "hero.sub": "Saviuunin tulta, hitaasti haudutettuja mausteita ja buffet, joka vaihtuu joka päivä. Tule Ahjokatu 12:een tai tilaa kotiin 30 minuutissa.",
+  "hero.cta1": "Tilaa verkosta",
+  "hero.cta2": "Katso ruokalista",
+  "hero.scroll": "Vieritä",
+
+  "stat.rating": "Asiakasarvio",
+  "stat.eta": "Keskim. toimitus",
+  "stat.buffet": "Päivittäinen buffet alk.",
+  "stat.years": "Vuotta Jyväskylässä",
+
+  "sec.signature.eyebrow": "Keittiömestarin valinnat",
+  "sec.signature.title": "Talon klassikot",
+  "sec.signature.sub": "Annokset, joita kanta-asiakkaamme tilaavat kerta toisensa jälkeen — jokainen viimeistellään tandoorissa tilauksesta.",
+  "sec.signature.cta": "Selaa koko ruokalista",
+
+  "sec.buffet.eyebrow": "Joka päivä",
+  "sec.buffet.title": "Buffet, joka ei toistu koskaan",
+  "sec.buffet.body": "Uusi pöytä joka viikonpäivä — curryja, biryania, tandooria, dalia, tuoreita salaatteja ja jälkiruokia. Haluatko tulisempaa, miedompaa tai erikoiskasvisannoksen? Kerro henkilökunnalle. Se sisältyy buffetin hintaan ilman lisämaksua.",
+  "sec.buffet.kids": "Perheen kanssa liikkeellä? Pöydästä löytyy myös pizzaa ja ranskalaisia.",
+  "sec.buffet.cta": "Katso viikon buffet",
+
+  "sec.cats.eyebrow": "Keittiö",
+  "sec.cats.title": "Yksitoista listaa, yksi keittiö",
+  "sec.cats.sub": "Intialaisia klassikoita, kiviuunipizzaa, kebabia pystygrillistä ja kattava vegaanivalikoima.",
+
+  "sec.story.eyebrow": "Tarinamme",
+  "sec.story.title": "Tehty hitaasti, tarkoituksella",
+  "sec.story.body": "Pasargad on ruokkinut Jyväskylää vuodesta 2016. Jokainen curry alkaa itse paahdetuista ja jauhetuista mausteista, hitaasti ruskistetusta sipulista ja yön yli marinoidusta lihasta ennen saviuunia. Käytämme tuoreita ja korkealaatuisia raaka-aineita — ei oikoteitä, ei jauheita.",
+  "sec.story.body2": "Hoidamme myös catering-tilaukset. Syntymäpäivät, yritysjuhlat ja yksityistilaisuudet omassa salissamme tai toimitettuna paikan päälle.",
+  "sec.story.cta": "Kysy cateringista",
+
+  "sec.reviews.title": "Mitä vieraamme sanovat",
+  "sec.reviews.basedOn": "Perustuu",
+  "sec.reviews.count": "arvosteluun",
+  "sec.reviews.more": "Lue lisää",
+  "sec.reviews.less": "Näytä vähemmän",
+  "sec.reviews.read": "Lue Tripadvisorissa",
+  "sec.reviews.prev": "Edelliset arvostelut",
+  "sec.reviews.next": "Lisää arvosteluja",
+  "sec.reviews.ctaBtn": "Arvostele Googlessa",
+
+  "sec.gallery.eyebrow": "Sali",
+  "sec.gallery.title": "Tule istumaan kanssamme",
+
+  "sec.order.eyebrow": "Toimitus ja nouto",
+  "sec.order.title": "Kuumana ovellesi 30 minuutissa",
+  "sec.order.f1": "Ilmainen toimitus 5 km säteellä",
+  "sec.order.f1s": "7 km 5 € · yli 50 € tilaukset ilmaiseksi",
+  "sec.order.f2": "Maksa haluamallasi tavalla",
+  "sec.order.f2s": "Kortti, Apple Pay, Google Pay, MobilePay",
+  "sec.order.f3": "Nouto 30 minuutissa",
+  "sec.order.f3s": "Minimitilaus noudossa 10 €, toimituksessa 23 €",
+
+  "sec.faq.title": "Hyvä tietää",
+
+  "cta.final.title": "Tuliko nälkä?",
+  "cta.final.sub": "Kokoa tilauksesi alle minuutissa.",
+
+  "shop.title": "Tilaa verkosta",
+  "shop.sub": "Valitse annokset, valitse nouto tai toimitus ja maksa turvallisesti. Aloitamme kokkaamisen heti.",
+  "shop.search": "Hae annoksia…",
+  "shop.all": "Kaikki",
+  "shop.filters": "Suodattimet",
+  "shop.empty": "Ei osumia. Kokeile toista hakua.",
+  "shop.add": "Lisää",
+  "shop.added": "Lisätty",
+  "shop.from": "alk.",
+
+  "cart.title": "Tilauksesi",
+  "cart.empty": "Ostoskorisi on tyhjä.",
+  "cart.emptySub": "Lisää jotain herkullista, niin se ilmestyy tähän.",
+  "cart.browse": "Selaa ruokalistaa",
+  "cart.subtotal": "Välisumma",
+  "cart.delivery": "Toimitus",
+  "cart.service": "Palvelumaksu",
+  "cart.total": "Yhteensä",
+  "cart.checkout": "Siirry maksamaan",
+  "cart.pickup": "Nouto",
+  "cart.deliver": "Toimitus",
+  "cart.free": "Ilmainen",
+  "cart.min": "Minimitilaus",
+  "cart.minWarn": "Lisää vielä {amount} saavuttaaksesi {mode}minimin.",
+  "cart.freeHint": "Lisää vielä {amount} saadaksesi ilmaisen toimituksen.",
+  "cart.clear": "Tyhjennä kori",
+  "cart.items": "tuotetta",
+  "cart.item": "tuote",
+  "cart.when": "Milloin",
+  "cart.asap": "Mahdollisimman pian",
+  "cart.note": "Viesti keittiölle",
+  "cart.notePlaceholder": "Allergiat, tulisuus, ovikello…",
+  "cart.processing": "Siirrytään maksuun…",
+
+  "menu.title": "À la carte",
+  "menu.sub": "Valmistetaan tilauksesta. Pääruoat tarjoillaan riisin ja naanin kera.",
+  "buffet.title": "Buffet",
+  "buffet.sub": "Eri pöytä joka viikonpäivä.",
+  "reserve.title": "Varaa pöytä",
+  "reserve.sub": "Kerro milloin, niin pöytä on valmiina. Yli 10 hengen ryhmät ja catering — soita meille.",
+  "contact.title": "Löydä meidät",
+
+  "form.name": "Nimi",
+  "form.phone": "Puhelin",
+  "form.email": "Sähköposti",
+  "form.guests": "Henkilömäärä",
+  "form.date": "Päivä",
+  "form.time": "Kello",
+  "form.message": "Viesti",
+  "form.send": "Lähetä pyyntö",
+  "form.sent": "Kiitos — vahvistamme puhelimitse pian.",
+
+  "success.title": "Tilaus vahvistettu",
+  "success.sub": "Kiitos. Maksu on vastaanotettu ja keittiö on jo hommissa.",
+  "success.back": "Takaisin etusivulle",
+  "cancel.title": "Maksu peruutettu",
+  "cancel.sub": "Tililtäsi ei veloitettu mitään. Ostoskorisi odottaa yhä.",
+  "cancel.back": "Palaa ostoskoriin",
+
+  "hours.kitchen": "Keittiö",
+  "hours.delivery": "Toimitus",
+  "footer.rights": "Kaikki oikeudet pidätetään.",
+  "footer.built": "Tuoreita raaka-aineita, joka päivä.",
+};
+
+const DICTS: Record<Locale, Dict> = { en, fi };
+
+export function getT(locale: Locale) {
+  const d = DICTS[locale] ?? DICTS.fi;
+  return (key: string, vars?: Record<string, string | number>) => {
+    let s = d[key] ?? en[key] ?? key;
+    if (vars) for (const [k, v] of Object.entries(vars)) s = s.replaceAll(`{${k}}`, String(v));
+    return s;
+  };
+}
+export type T = ReturnType<typeof getT>;
+
+export const money = (n: number, locale: Locale = "fi") =>
+  new Intl.NumberFormat(locale === "fi" ? "fi-FI" : "en-IE", {
+    style: "currency", currency: "EUR", minimumFractionDigits: 2,
+  }).format(n);
