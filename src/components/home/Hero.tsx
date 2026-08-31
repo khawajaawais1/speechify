@@ -7,7 +7,7 @@ import { Photo } from "../Photo";
 import { SplitText } from "../SplitText";
 import { Btn } from "../Button";
 import { useLocale, useT } from "@/lib/useLocale";
-import { PHOTOS, SITE } from "@/data/site";
+import { FIRE_FRAMES, GEN, SITE } from "@/data/site";
 
 export function Hero() {
   const t = useT();
@@ -84,12 +84,12 @@ export function Hero() {
                   <Star key={i} className="h-3.5 w-3.5 fill-gold-600 text-gold-600" />
                 ))}
               </span>
-              <span className="font-semibold text-ink">{SITE.rating.score.toFixed(2)}</span>
+              <span className="font-semibold text-ink">{SITE.rating.score.toFixed(1)}</span>
             </span>
             <span className="h-3 w-px bg-line-strong" />
-            <span>{SITE.order.etaMinutes} min {locale === "fi" ? "toimitus" : "delivery"}</span>
+            <span>{SITE.order.etaMinutes} min {t("hero.deliveryWord")}</span>
             <span className="h-3 w-px bg-line-strong" />
-            <span>{locale === "fi" ? "Ilmainen toimitus 5 km" : "Free delivery within 5 km"}</span>
+            <span>{t("hero.freeDelivery")}</span>
           </div>
         </div>
 
@@ -101,33 +101,33 @@ export function Hero() {
             className="bg-sun absolute -right-6 -top-6 bottom-10 left-10 rounded-[3rem] opacity-90"
           />
           <Photo
-            src={PHOTOS.hero}
-            alt=""
+            src={FIRE_FRAMES[FIRE_FRAMES.length - 1]}
+            alt={t("fire.dishAlt")}
             priority
             className="relative aspect-[4/5] w-full rounded-[2.5rem] border-4 border-white shadow-lift sm:aspect-[5/5]"
             sizes="(max-width:1024px) 92vw, 44vw"
           />
 
           {/* Floating chips — solid surfaces, no backdrop-filter */}
-          <div className="chip float-a absolute -left-3 top-10 flex items-center gap-3 rounded-2xl px-4 py-3 sm:-left-6">
+          <div style={{ ["--d" as string]: "1.15s" }} className="chip chip-in float-a absolute -left-3 top-10 flex items-center gap-3 rounded-2xl px-4 py-3 sm:-left-6">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-crimson-500 text-white">
               <Star className="h-4 w-4 fill-current" />
             </span>
             <span>
               <span className="block font-display text-lg font-semibold leading-none text-ink">
-                {SITE.rating.score.toFixed(2)}
+                {SITE.rating.score.toFixed(1)}
               </span>
               <span className="text-[0.68rem] uppercase tracking-widest text-faint">
-                {locale === "fi" ? "Asiakasarvio" : "Guest rating"}
+                {t("hero.guestRating")}
               </span>
             </span>
           </div>
 
-          <div className="chip float-b absolute -bottom-5 right-2 w-[15rem] rounded-3xl p-2.5 sm:right-[-1.5rem]">
-            <Photo src={PHOTOS.food1} alt="" className="aspect-[16/10] w-full rounded-2xl" sizes="240px" />
+          <div style={{ ["--d" as string]: "1.3s" }} className="chip chip-in float-b absolute -bottom-5 right-2 w-[15rem] rounded-3xl p-2.5 sm:right-[-1.5rem]">
+            <Photo src={GEN.murghMakhni} alt="" className="aspect-[16/10] w-full rounded-2xl" sizes="240px" />
             <div className="px-2 pb-1 pt-3">
               <p className="text-[0.62rem] font-bold uppercase tracking-[0.22em] text-crimson-500">
-                {locale === "fi" ? "Talon suosikki" : "House favourite"}
+                {t("hero.houseFavourite")}
               </p>
               <p className="mt-1 font-display text-[1.05rem] font-semibold leading-tight text-ink">
                 Murgh Makhni
@@ -135,7 +135,7 @@ export function Hero() {
             </div>
           </div>
 
-          <div className="chip float-c absolute right-3 top-[-1rem] hidden items-center gap-2 rounded-full px-4 py-2.5 sm:flex">
+          <div style={{ ["--d" as string]: "1.45s" }} className="chip chip-in float-c absolute right-3 top-[-1rem] hidden items-center gap-2 rounded-full px-4 py-2.5 sm:flex">
             <Bike className="h-4 w-4 text-crimson-500" />
             <span className="text-[0.76rem] font-semibold text-ink">{SITE.order.etaMinutes} min</span>
           </div>

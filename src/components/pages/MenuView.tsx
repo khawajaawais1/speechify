@@ -7,7 +7,7 @@ import { Reveal } from "../Reveal";
 import { Btn } from "../Button";
 import { useLocale, useT } from "@/lib/useLocale";
 import { CATEGORIES, byCat, type CategoryId } from "@/data/products";
-import { PHOTOS } from "@/data/site";
+import { GEN, HERO_ART, PHOTOS } from "@/data/site";
 import { ArrowRight } from "lucide-react";
 
 const ORDER: CategoryId[] = [
@@ -16,17 +16,23 @@ const ORDER: CategoryId[] = [
 ];
 
 const SECTION_IMG: Partial<Record<CategoryId, string>> = {
-  "indian-starters": PHOTOS.food4,
+  "indian-starters": "/menu/onion-pakoda.jpg",
   "indian-mains": PHOTOS.food2,
-  biryani: PHOTOS.food3,
-  pizza: PHOTOS.food5,
-  "vegan-pizza": PHOTOS.food6,
-  kebab: PHOTOS.food7,
-  voner: PHOTOS.food8,
-  falafel: PHOTOS.food9,
-  salads: PHOTOS.food1,
-  drinks: PHOTOS.interior3,
+  biryani: "/menu/murgh-biryani.jpg",
+  pizza: "/menu/pizza_1.jpg",
+  "vegan-pizza": GEN.pizzaVegan,
+  kebab: "/menu/kebab.jpg",
+  voner: "/menu/voner-plate.jpg",
+  falafel: "/menu/falafel-iskender.jpg",
+  salads: "/menu/salad-greek.jpg",
+  // A lineup of the actual six bottles and cans, composed from the same
+  // packshots the drink cards use. The old cover was a photo of the kebab
+  // grill, which told a customer nothing about what they could drink.
+  drinks: "/menu/drinks-lineup.jpg",
 };
+
+/** Covers that are product shots on white rather than photographs of food. */
+const PACKSHOT_COVER = new Set<CategoryId>(["drinks"]);
 
 export function MenuView() {
   const t = useT();
@@ -34,10 +40,10 @@ export function MenuView() {
 
   return (
     <>
-      <PageHero eyebrow={t("nav.menu")} title={t("menu.title")} sub={t("menu.sub")} image={PHOTOS.food2} />
+      <PageHero eyebrow={t("nav.menu")} title={t("menu.title")} sub={t("menu.sub")} image={HERO_ART.menu} />
 
       {/* Sticky category rail */}
-      <nav className="sticky top-[var(--nav-h)] z-40 border-y border-line bg-canvas/92 backdrop-blur-xl">
+      <nav className="sticky top-[var(--nav-h)] z-40 border-y border-line bg-canvas/97 lg:bg-canvas/92 lg:backdrop-blur-xl">
         <div className="mx-auto max-w-[88rem] overflow-x-auto px-5 sm:px-8">
           <ul className="flex gap-1 py-3">
             {ORDER.map((id) => {
@@ -70,7 +76,15 @@ export function MenuView() {
                     <Photo
                       src={SECTION_IMG[id]!}
                       alt=""
-                      className="mb-5 aspect-[4/3] w-full rounded-3xl border-4 border-white shadow-lift"
+                      // The drinks cover is a product lineup on white, not a
+                      // plated dish. The default grade lays a saffron/crimson
+                      // gradient over the image, which on white reads as a
+                      // stain rather than warmth — so packshot covers opt out.
+                      grade={!PACKSHOT_COVER.has(id)}
+                      overlay={PACKSHOT_COVER.has(id) ? "none" : "tint"}
+                      className={`mb-5 aspect-[4/3] w-full rounded-3xl border-4 border-white shadow-lift ${
+                        PACKSHOT_COVER.has(id) ? "bg-white" : ""
+                      }`}
                       sizes="(max-width:1024px) 92vw, 288px"
                     />
                   )}

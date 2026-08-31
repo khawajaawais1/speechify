@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "images:local": "node scripts/fetch-images.mjs",
+    "preflight": "node scripts/preflight.mjs",
+    "check": "tsc --noEmit && next lint && node scripts/preflight.mjs"
   },
   "dependencies": {
     "@stripe/stripe-js": "^9.13.0",

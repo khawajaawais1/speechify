@@ -8,7 +8,7 @@ import { PageHero } from "../PageHero";
 import { ProductCard } from "../ProductCard";
 import { useLocale, useT } from "@/lib/useLocale";
 import { CATEGORIES, PRODUCTS, type CategoryId } from "@/data/products";
-import { PHOTOS, SITE } from "@/data/site";
+import { HERO_ART, SITE } from "@/data/site";
 import { money } from "@/lib/i18n";
 import { EASE } from "@/lib/motion";
 
@@ -48,15 +48,15 @@ export function ShopView() {
 
   return (
     <>
-      <PageHero eyebrow={t("nav.shop")} title={t("shop.title")} sub={t("shop.sub")} image={PHOTOS.food1} />
+      <PageHero eyebrow={t("nav.shop")} title={t("shop.title")} sub={t("shop.sub")} image={HERO_ART.shop} />
 
       {/* Order info strip */}
       <div className="mx-auto max-w-[88rem] px-5 sm:px-8">
         <div className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line shadow-card sm:grid-cols-3">
           {[
-            { k: locale === "fi" ? "Toimitus" : "Delivery", v: `0–5 km ${t("cart.free")} · 7 km ${money(5, locale)}` },
-            { k: locale === "fi" ? "Minimitilaus" : "Minimum order", v: `${t("cart.pickup")} ${money(SITE.order.minPickup, locale)} · ${t("cart.deliver")} ${money(SITE.order.minDelivery, locale)}` },
-            { k: locale === "fi" ? "Arvioitu aika" : "Estimated time", v: `${SITE.order.etaMinutes} min` },
+            { k: t("shop.deliveryLabel"), v: `0–5 km ${t("cart.free")} · 7 km ${money(5, locale)}` },
+            { k: t("shop.minLabel"), v: `${t("cart.pickup")} ${money(SITE.order.minPickup, locale)} · ${t("cart.deliver")} ${money(SITE.order.minDelivery, locale)}` },
+            { k: t("shop.etaLabel"), v: `${SITE.order.etaMinutes} min` },
           ].map((x) => (
             <div key={x.k} className="bg-card px-5 py-4">
               <p className="text-[0.66rem] font-semibold uppercase tracking-[0.18em] text-crimson-500">{x.k}</p>
@@ -67,7 +67,7 @@ export function ShopView() {
       </div>
 
       {/* Controls */}
-      <div className="sticky top-[var(--nav-h)] z-40 mt-8 border-y border-line bg-canvas/92 backdrop-blur-xl">
+      <div className="sticky top-[var(--nav-h)] z-40 mt-8 border-y border-line bg-canvas/97 lg:bg-canvas/92 lg:backdrop-blur-xl">
         <div className="mx-auto max-w-[88rem] px-5 py-3 sm:px-8">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
             <label className="relative flex-1">
@@ -76,7 +76,7 @@ export function ShopView() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder={t("shop.search")}
-                className="w-full rounded-full border border-line bg-card py-3 pl-11 pr-10 text-[0.85rem] text-ink shadow-card placeholder:text-faint focus:border-crimson-500 focus:outline-none"
+                className="w-full rounded-full border border-line bg-card py-3 pl-11 pr-10 text-[0.85rem] text-ink shadow-card placeholder:text-faint focus:border-crimson-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson-500"
               />
               {q && (
                 <button

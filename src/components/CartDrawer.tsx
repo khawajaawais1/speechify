@@ -32,11 +32,13 @@ export function CartDrawer() {
           locale,
         }),
       });
-      const data = (await res.json()) as { url?: string; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
       if (data.url) { window.location.href = data.url; return; }
-      setError(data.error ?? "Checkout unavailable");
+      // The route already localises its errors; the key is the fallback for a
+      // response that never reached it (a 502 from the host, say).
+      setError(data.error ?? t("cart.errGeneric"));
     } catch {
-      setError("Network error — please try again.");
+      setError(t("cart.errNetwork"));
     } finally {
       setBusy(false);
     }
@@ -136,7 +138,15 @@ export function CartDrawer() {
                             {l.product.img && (
                               <Photo
                                 src={l.product.img} alt={name}
-                                className="h-16 w-16 shrink-0 rounded-xl" sizes="64px"
+                                // Same reason as the product card: cropping a can
+                                // to a 64px square leaves an unreadable middle band.
+                                fit={l.product.packshot ? "contain" : "cover"}
+                                grade={!l.product.packshot}
+                                overlay={l.product.packshot ? "none" : "tint"}
+                                className={`h-16 w-16 shrink-0 rounded-xl ${
+                                  l.product.packshot ? "bg-white p-1.5" : ""
+                                }`}
+                                sizes="64px"
                               />
                             )}
                             <div className="min-w-0 flex-1">
@@ -146,18 +156,18 @@ export function CartDrawer() {
                                 <div className="flex items-center gap-1 rounded-full border border-line p-0.5">
                                   <button
                                     onClick={() => c.dec(l.product.id)} aria-label={t("a11y.decrease")}
-                                    className="flex h-6 w-6 items-center justify-center rounded-full text-ink-soft hover:bg-sand-2"
+                                    className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-sand-2"
                                   >
-                                    <Minus className="h-3 w-3" />
+                                    <Minus className="h-3.5 w-3.5" />
                                   </button>
                                   <span className="w-5 text-center text-[0.78rem] font-bold tabular-nums text-ink">
                                     {l.qty}
                                   </span>
                                   <button
                                     onClick={() => c.add(l.product.id)} aria-label={t("a11y.increase")}
-                                    className="flex h-6 w-6 items-center justify-center rounded-full text-ink-soft hover:bg-sand-2"
+                                    className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-sand-2"
                                   >
-                                    <Plus className="h-3 w-3" />
+                                    <Plus className="h-3.5 w-3.5" />
                                   </button>
                                 </div>
                                 <span className="text-[0.85rem] font-bold tabular-nums text-crimson-600">
@@ -167,7 +177,7 @@ export function CartDrawer() {
                             </div>
                             <button
                               onClick={() => c.remove(l.product.id)} aria-label={t("a11y.remove")}
-                              className="self-start text-faint transition-colors hover:text-crimson-500"
+                              className="-mr-1 -mt-1 flex h-9 w-9 shrink-0 items-center justify-center self-start rounded-full text-faint transition-colors hover:bg-crimson-50 hover:text-crimson-500"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>
@@ -186,7 +196,7 @@ export function CartDrawer() {
                       onChange={(e) => c.setNote(e.target.value.slice(0, 300))}
                       placeholder={t("cart.notePlaceholder")}
                       rows={2}
-                      className="w-full resize-none rounded-2xl border border-line bg-card px-4 py-3 text-[0.82rem] text-ink placeholder:text-faint focus:border-crimson-500/50 focus:outline-none"
+                      className="w-full resize-none rounded-2xl border border-line bg-card px-4 py-3 text-[0.82rem] text-ink placeholder:text-faint focus:border-crimson-500/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson-500"
                     />
                   </label>
 

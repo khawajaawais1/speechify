@@ -43,7 +43,7 @@ export function Nav() {
         <div
           className={`transition-all duration-500 ${
             scrolled
-              ? "border-b border-line bg-canvas/90 shadow-card backdrop-blur-xl backdrop-saturate-150"
+              ? "border-b border-line bg-canvas/97 shadow-card lg:bg-canvas/90 lg:backdrop-blur-xl lg:backdrop-saturate-150"
               : "border-b border-transparent bg-transparent"
           }`}
         >
@@ -136,26 +136,46 @@ export function Nav() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[64] bg-ink/90 backdrop-blur-2xl lg:hidden"
+            /* Solid cream, not `bg-ink/90`.
+             *
+             * The sheet was built for the original dark theme and never
+             * followed the retheme: it kept a near-black background while the
+             * links kept `text-ink`, which is also near-black. The whole mobile
+             * menu was unreadable — dark text on a dark panel, under a cream
+             * header bar that made the seam obvious.
+             *
+             * Solid rather than translucent also drops a `backdrop-blur-2xl`
+             * over the full viewport, which is the most expensive filter on the
+             * page and was buying nothing behind an opaque panel. */
+            className="fixed inset-0 z-[64] bg-canvas lg:hidden"
           >
             <div className="flex h-full flex-col justify-between px-6 pb-10 pt-[calc(var(--nav-h)+2rem)]">
               <ul className="space-y-1">
-                {links.map((l, i) => (
-                  <motion.li
-                    key={l.key}
-                    initial={{ opacity: 0, x: -24 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.05 + i * 0.05, ease: EASE, duration: 0.5 }}
-                  >
-                    <Link
-                      href={`/${locale}${l.href}`}
-                      onClick={() => setMobile(false)}
-                      className="block border-b border-line py-4 font-display text-3xl font-semibold text-ink transition-colors hover:text-crimson-500"
+                {links.map((l, i) => {
+                  const active = isActive(l.href);
+                  return (
+                    <motion.li
+                      key={l.key}
+                      initial={{ opacity: 0, x: -24 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.05 + i * 0.05, ease: EASE, duration: 0.5 }}
                     >
-                      {t(l.key)}
-                    </Link>
-                  </motion.li>
-                ))}
+                      <Link
+                        href={`/${locale}${l.href}`}
+                        onClick={() => setMobile(false)}
+                        aria-current={active ? "page" : undefined}
+                        className={`flex items-center justify-between border-b border-line py-4 font-display text-3xl font-semibold transition-colors ${
+                          active ? "text-crimson-600" : "text-ink hover:text-crimson-500"
+                        }`}
+                      >
+                        {t(l.key)}
+                        {/* The desktop nav marks the current page with a pill;
+                            the mobile sheet had no active state at all. */}
+                        {active && <span className="h-1.5 w-1.5 rounded-full bg-crimson-500" />}
+                      </Link>
+                    </motion.li>
+                  );
+                })}
               </ul>
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center rounded-full border border-line p-0.5">

@@ -7,15 +7,26 @@ import { PageHero } from "../PageHero";
 import { Photo } from "../Photo";
 import { Reveal } from "../Reveal";
 import { useLocale, useT } from "@/lib/useLocale";
-import { PHOTOS, SITE } from "@/data/site";
+import { HERO_ART, PHOTOS, SITE } from "@/data/site";
 
 const field =
-  "w-full rounded-2xl border border-line bg-card px-4 py-3.5 text-[0.88rem] text-ink shadow-card placeholder:text-faint focus:border-crimson-500 focus:outline-none";
+  "w-full rounded-2xl border border-line bg-card px-4 py-3.5 text-[0.88rem] text-ink shadow-card placeholder:text-faint focus:border-crimson-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson-500";
+
+/** Local YYYY-MM-DD. `toISOString()` is UTC and rolls the date over in Finland. */
+const todayISO = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate(),
+  ).padStart(2, "0")}`;
+};
 
 export function ReserveView() {
   const t = useT();
   const locale = useLocale();
   const [sent, setSent] = useState(false);
+  // Lazy initial state: computed once on the client, so it cannot drift and
+  // cannot trigger a hydration mismatch by running during render on the server.
+  const [minDate] = useState(todayISO);
   const [form, setForm] = useState({
     name: "", phone: "", email: "", guests: "2", date: "", time: "18:00", message: "",
   });
@@ -25,7 +36,7 @@ export function ReserveView() {
 
   const mailto = () => {
     const subject = encodeURIComponent(
-      `${locale === "fi" ? "Pöytävaraus" : "Table reservation"} — ${form.name} — ${form.date} ${form.time}`,
+      `${t("reserve.subject")} — ${form.name} — ${form.date} ${form.time}`,
     );
     const body = encodeURIComponent(
       [
@@ -44,7 +55,7 @@ export function ReserveView() {
 
   return (
     <>
-      <PageHero eyebrow={t("nav.reserve")} title={t("reserve.title")} sub={t("reserve.sub")} image={PHOTOS.interior3} />
+      <PageHero eyebrow={t("nav.reserve")} title={t("reserve.title")} sub={t("reserve.sub")} image={HERO_ART.reservations} />
 
       <div className="mx-auto grid max-w-[88rem] gap-10 px-5 pb-24 sm:px-8 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
         <form
@@ -66,11 +77,15 @@ export function ReserveView() {
             </label>
             <label>
               <span className="mb-2 block text-[0.7rem] font-semibold uppercase tracking-widest text-faint">{t("form.date")}</span>
-              <input required type="date" value={form.date} onChange={set("date")} className={field} />
+              {/* Without `min` the picker happily accepts last Tuesday. */}
+              <input required type="date" min={minDate} value={form.date} onChange={set("date")} className={field} />
             </label>
             <label>
               <span className="mb-2 block text-[0.7rem] font-semibold uppercase tracking-widest text-faint">{t("form.time")}</span>
-              <input required type="time" value={form.time} onChange={set("time")} className={field} />
+              {/* Bounded to service hours: the kitchen closes at 21:00 and the
+                  last sitting is 20:30, so a 02:00 booking is not a booking. */}
+              <input required type="time" min="10:30" max="20:30" step={900}
+                value={form.time} onChange={set("time")} className={field} />
             </label>
             <label className="sm:col-span-2">
               <span className="mb-2 block text-[0.7rem] font-semibold uppercase tracking-widest text-faint">{t("form.guests")}</span>
@@ -93,7 +108,7 @@ export function ReserveView() {
             <label className="sm:col-span-2">
               <span className="mb-2 block text-[0.7rem] font-semibold uppercase tracking-widest text-faint">{t("form.message")}</span>
               <textarea rows={3} value={form.message} onChange={set("message")} className={`${field} resize-none`}
-                placeholder={locale === "fi" ? "Allergiat, juhla, lastenistuin…" : "Allergies, occasion, high chair…"} />
+                placeholder={t("reserve.messagePlaceholder")} />
             </label>
           </div>
 
@@ -108,10 +123,21 @@ export function ReserveView() {
               {sent ? t("form.sent") : t("form.send")}
             </span>
           </motion.button>
+          {/* The form hands off to the customer's mail client, which may not
+              exist — plenty of phones have no mail app configured. Saying
+              "Thanks, we'll confirm shortly" in that case is a lie that costs
+              the restaurant a booking, so once submitted we say what actually
+              happened and give a phone number that always works. */}
+          {sent && (
+            <p
+              role="status"
+              className="mt-4 rounded-2xl border border-saffron-300 bg-saffron-100 px-4 py-3 text-center text-[0.76rem] leading-relaxed text-ink-soft"
+            >
+              {t("form.sentHelp", { phone: SITE.phone })}
+            </p>
+          )}
           <p className="mt-3 text-center text-[0.7rem] text-faint">
-            {locale === "fi"
-              ? "Vahvistamme varauksen puhelimitse. Kiireellisissä tapauksissa soita suoraan."
-              : "We confirm reservations by phone. In a hurry? Call us directly."}
+            {t("reserve.confirmNote")}
           </p>
         </form>
 
@@ -119,11 +145,9 @@ export function ReserveView() {
           <Photo src={PHOTOS.interior1} alt="" className="aspect-[4/3] w-full rounded-[2rem] border-4 border-white shadow-lift" sizes="(max-width:1024px) 92vw, 40vw" />
           <Reveal>
             <div className="rounded-[2rem] border border-line bg-card p-7 shadow-card">
-              <p className="eyebrow flex items-center gap-2"><Users className="h-3.5 w-3.5" />{locale === "fi" ? "Isot ryhmät" : "Large groups"}</p>
+              <p className="eyebrow flex items-center gap-2"><Users className="h-3.5 w-3.5" />{t("reserve.groupsTitle")}</p>
               <p className="mt-3 text-[0.88rem] leading-relaxed text-ink-soft">
-                {locale === "fi"
-                  ? "Yli 10 hengen ryhmille ja yksityistilaisuuksille teemme oman menun. Soita, niin suunnitellaan yhdessä."
-                  : "For groups of 10+ and private events we build a bespoke menu. Give us a call and we'll plan it together."}
+                {t("reserve.groupsBody")}
               </p>
               <a href={SITE.phoneHref} className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-crimson-600">
                 <Phone className="h-4 w-4" />{SITE.phone}

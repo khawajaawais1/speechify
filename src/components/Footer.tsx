@@ -38,7 +38,7 @@ export function Footer() {
                 ))}
               </div>
               <span className="text-[0.75rem] text-muted">
-                {SITE.rating.score.toFixed(2)} · {SITE.rating.count} reviews
+                {SITE.rating.score.toFixed(1)} · {SITE.rating.count} {t("rating.reviews")}
               </span>
             </div>
             <div className="mt-6 flex gap-2">
@@ -119,9 +119,7 @@ export function Footer() {
             </ul>
             <div className="mt-6 rounded-2xl border border-saffron-500/30 bg-saffron-100 p-4">
               <p className="text-[0.72rem] font-medium leading-relaxed text-saffron-700">
-                {locale === "fi"
-                  ? "Ilmainen toimitus 5 km säteellä · 7 km 5 € · yli 50 € ilmaiseksi"
-                  : "Free delivery within 5 km · 7 km for €5 · free over €50"}
+                {t("footer.deliveryLine")}
               </p>
             </div>
           </div>

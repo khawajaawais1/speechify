@@ -11,7 +11,16 @@ import { heroes } from "@/data/products";
 export function Signature() {
   const t = useT();
   const locale = useLocale();
-  const items = heroes().slice(0, 6);
+  // One row on the home page — three cards is enough of a taste, and the
+  // "browse the full menu" button does the rest.
+  //
+  // Deals are excluded: they sit first in the catalogue, so an unfiltered
+  // slice(0,3) showed three "Mix Deal" promos under a heading that reads
+  // "the dishes our regulars order again and again". These are the actual
+  // signatures — lamb, chicken and fish.
+  const items = heroes()
+    .filter((p) => p.cat !== "deals")
+    .slice(0, 3);
 
   return (
     <section className="relative mx-auto max-w-[88rem] px-5 py-24 sm:px-8 sm:py-28">

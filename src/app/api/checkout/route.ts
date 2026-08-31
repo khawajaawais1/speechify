@@ -14,24 +14,55 @@ type Body = {
 
 const cents = (n: number) => Math.round(n * 100);
 
-export async function POST(req: Request) {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) {
-    return NextResponse.json(
-      { error: "Payments are not configured yet. Add STRIPE_SECRET_KEY to .env.local." },
-      { status: 501 },
-    );
-  }
+/**
+ * Errors reach a customer mid-purchase, so they are localised and written for
+ * a person rather than a developer. Stripe's own message is deliberately not
+ * forwarded: it is English-only, often mentions API objects, and can echo
+ * account configuration back to the browser. It is logged instead.
+ */
+const MSG = {
+  unconfigured: {
+    fi: "Verkkomaksu ei ole vielä käytössä. Soita meille, niin otamme tilauksen vastaan puhelimitse.",
+    en: "Online payment isn't switched on yet. Give us a call and we'll take your order by phone.",
+  },
+  malformed: {
+    fi: "Tilausta ei voitu lukea. Päivitä sivu ja yritä uudelleen.",
+    en: "We couldn't read that order. Refresh the page and try again.",
+  },
+  empty: {
+    fi: "Ostoskori on tyhjä.",
+    en: "Your basket is empty.",
+  },
+  failed: {
+    fi: "Maksun avaaminen epäonnistui. Yritä hetken kuluttua uudelleen tai soita meille.",
+    en: "We couldn't open the payment page. Try again in a moment, or give us a call.",
+  },
+} as const;
 
+const minimumMsg = (l: "en" | "fi", mode: "delivery" | "pickup", min: number) =>
+  l === "fi"
+    ? `${mode === "pickup" ? "Noudon" : "Kotiinkuljetuksen"} minimitilaus on ${min
+        .toFixed(2)
+        .replace(".", ",")} €.`
+    : `Minimum order for ${mode} is €${min.toFixed(2)}.`;
+
+export async function POST(req: Request) {
   let body: Body;
   try {
     body = (await req.json()) as Body;
   } catch {
-    return NextResponse.json({ error: "Malformed request." }, { status: 400 });
+    return NextResponse.json({ error: MSG.malformed.fi }, { status: 400 });
   }
 
   const mode = body.mode === "pickup" ? "pickup" : "delivery";
   const locale = body.locale === "en" ? "en" : "fi";
+
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    // 503, not 501: the endpoint exists and will work once the key is set.
+    console.error("[checkout] STRIPE_SECRET_KEY is not set — no session created.");
+    return NextResponse.json({ error: MSG.unconfigured[locale] }, { status: 503 });
+  }
 
   // Re-price everything server-side. Never trust prices from the client.
   const items = (body.lines ?? [])
@@ -44,35 +75,59 @@ export async function POST(req: Request) {
     .filter(Boolean) as { product: (typeof PRODUCTS)[number]; qty: number; unit: number }[];
 
   if (items.length === 0) {
-    return NextResponse.json({ error: "Your basket is empty." }, { status: 400 });
+    return NextResponse.json({ error: MSG.empty[locale] }, { status: 400 });
   }
 
   const subtotal = +items.reduce((s, i) => s + i.unit * i.qty, 0).toFixed(2);
   const minimum = mode === "pickup" ? SITE.order.minPickup : SITE.order.minDelivery;
   if (subtotal < minimum) {
-    return NextResponse.json(
-      { error: `Minimum order for ${mode} is €${minimum.toFixed(2)}.` },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: minimumMsg(locale, mode, minimum) }, { status: 400 });
   }
 
   const deliveryFee =
     mode === "pickup" || subtotal >= SITE.order.freeDeliveryOver ? 0 : SITE.order.zones[1].fee;
 
+  /**
+   * Where Stripe sends the customer back to.
+   *
+   * `NEXT_PUBLIC_SITE_URL` is preferred over the Origin header, which is
+   * attacker-controlled: anyone can POST here with `Origin: https://evil.test`
+   * and receive a Stripe session whose success_url points at their own site.
+   * The header is only used as a development fallback.
+   */
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  const origin = configured ?? req.headers.get("origin") ?? "http://localhost:3000";
+  const isPublic = /^https:\/\//.test(origin) && !/localhost|127\.0\.0\.1/.test(origin);
+
+  /**
+   * Stripe requires absolute URLs for product images and rejects the whole
+   * session if it gets a relative path — which is what most of the catalogue
+   * holds (`/menu/kebab.jpg`). Stripe also fetches them from its own servers,
+   * so a localhost URL is useless: images are omitted in development.
+   */
+  const absolute = (src?: string) => {
+    if (!src) return undefined;
+    if (/^https?:\/\//.test(src)) return src;
+    return isPublic ? `${origin}${src}` : undefined;
+  };
+
   const stripe = new Stripe(key);
 
-  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map((i) => ({
-    quantity: i.qty,
-    price_data: {
-      currency: "eur",
-      unit_amount: cents(i.unit),
-      product_data: {
-        name: (locale === "fi" && i.product.nameFi) || i.product.name,
-        description: ((locale === "fi" && i.product.descFi) || i.product.desc)?.slice(0, 240),
-        ...(i.product.img ? { images: [i.product.img] } : {}),
+  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map((i) => {
+    const image = absolute(i.product.img);
+    return {
+      quantity: i.qty,
+      price_data: {
+        currency: "eur",
+        unit_amount: cents(i.unit),
+        product_data: {
+          name: (locale === "fi" && i.product.nameFi) || i.product.name,
+          description: ((locale === "fi" && i.product.descFi) || i.product.desc)?.slice(0, 240),
+          ...(image ? { images: [image] } : {}),
+        },
       },
-    },
-  }));
+    };
+  });
 
   lineItems.push({
     quantity: 1,
@@ -82,11 +137,6 @@ export async function POST(req: Request) {
       product_data: { name: locale === "fi" ? "Palvelumaksu" : "Service fee" },
     },
   });
-
-  const origin =
-    req.headers.get("origin") ??
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    "http://localhost:3000";
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -128,7 +178,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: session.url });
   } catch (e) {
-    const message = e instanceof Error ? e.message : "Stripe error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    // Log the real reason; hand the customer something they can act on.
+    console.error("[checkout] Stripe session failed:", e instanceof Error ? e.message : e);
+    return NextResponse.json({ error: MSG.failed[locale] }, { status: 502 });
   }
 }

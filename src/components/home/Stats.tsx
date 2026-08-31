@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useInView } from "motion/react";
 import { Reveal } from "../Reveal";
 import { useT } from "@/lib/useLocale";
-import { SITE } from "@/data/site";
+import { BUFFET_FROM, SITE } from "@/data/site";
 
 function Count({ to, decimals = 0, suffix = "", prefix = "" }: {
   to: number; decimals?: number; suffix?: string; prefix?: string;
@@ -38,9 +38,9 @@ function Count({ to, decimals = 0, suffix = "", prefix = "" }: {
 export function Stats() {
   const t = useT();
   const stats = [
-    { label: t("stat.rating"), node: <Count to={SITE.rating.score} decimals={2} /> },
+    { label: t("stat.rating"), node: <Count to={SITE.rating.score} decimals={1} /> },
     { label: t("stat.eta"), node: <Count to={SITE.order.etaMinutes} suffix=" min" /> },
-    { label: t("stat.buffet"), node: <Count to={SITE.buffet.weekday.price} prefix="€" /> },
+    { label: t("stat.buffet"), node: <Count to={BUFFET_FROM} prefix="€" decimals={2} /> },
     { label: t("stat.years"), node: <Count to={new Date().getFullYear() - SITE.since} suffix="+" /> },
   ];
 

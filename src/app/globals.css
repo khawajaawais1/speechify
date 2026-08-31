@@ -21,7 +21,7 @@
   --color-ink:       #221310;   /* warm near-black, headings */
   --color-ink-soft:  #4a332b;   /* body */
   --color-muted:     #7b6156;   /* secondary */
-  --color-faint:     #a4907f;   /* captions, meta */
+  --color-faint:     #806a59;   /* captions, meta — 4.8:1 on canvas (AA) */
 
   /* ---- Semantic lines ---- */
   --color-line:        #ead9c0;
@@ -254,6 +254,71 @@ body {
 }
 .nav-in { animation: nav-drop 0.8s var(--ease-out-expo) 0.1s both; }
 
+/* ============================================================
+   HERO CHIPS
+   The fire sequence now lives in its own scroll-driven section
+   (<FireStory />); the hero just fades its chips in after the
+   headline has landed.
+   ============================================================ */
+/* Floating chips hold back until the flames are gone — they look odd
+   sitting over fire. */
+.chip-in { animation: chip-in 0.7s var(--ease-out-expo) var(--d, 2.2s) both; }
+@keyframes chip-in {
+  from { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.96) }
+  to   { opacity: 1; transform: none }
+}
+
+/* ============================================================
+   PINNED SCROLL STAGE
+   Everything here exists to keep the scrub on the compositor.
+   ============================================================ */
+
+/* Promote each layer once so the browser holds it as a texture instead of
+   re-rasterising a full-screen image on every scroll tick. */
+.fire-layer {
+  will-change: opacity, transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Copy swap. Keyed remount + a short fade, so the two captions can never be
+   on screen together the way an opacity cross-fade allows. */
+.copy-swap { animation: copy-swap 0.55s var(--ease-out-expo) both; }
+@keyframes copy-swap {
+  from { opacity: 0; transform: translate3d(0, 18px, 0) }
+  to   { opacity: 1; transform: none }
+}
+
+/* Embers. Transform + opacity only, px distances (cheaper than viewport
+   units), and the whole layer is faded out by scroll progress once the fire
+   is down. */
+.story-ember {
+  position: absolute;
+  bottom: 10%;
+  left: var(--x);
+  height: 8px;
+  width: 8px;
+  border-radius: 999px;
+  pointer-events: none;
+  background: radial-gradient(circle, #fff3d4 0%, #ffc45c 35%, #e4572e 72%, rgba(228,87,46,0) 74%);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: story-ember var(--dur) linear var(--delay) infinite;
+}
+@keyframes story-ember {
+  0%   { transform: translate3d(0, 0, 0) scale(calc(var(--s) * 0.35)); opacity: 0 }
+  10%  { opacity: 0.95 }
+  100% { transform: translate3d(var(--dx), -420px, 0) scale(calc(var(--s) * 0.08)); opacity: 0 }
+}
+
+/* Nothing above may leave content unreadable or burn CPU when motion is off. */
+@media (prefers-reduced-motion: reduce) {
+  .story-ember, .copy-swap { animation: none !important; }
+  .copy-swap { opacity: 1 !important; transform: none !important; }
+  .story-ember { display: none !important; }
+  .chip-in { animation: none !important; opacity: 1 !important; transform: none !important; }
+}
+
 /* Generic staggered entrance. `backwards` fill so nothing is left holding a
    transform (which would create a stacking context) once it has played. */
 @keyframes rise-in {
@@ -296,15 +361,28 @@ body {
 
 /* Paper grain — static. The animated version repainted a full-screen
    blended layer every frame and was one of the biggest scroll costs. */
-.grain::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.03;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+/* Paper grain.
+ *
+ * This used to carry `mix-blend-mode: multiply` on a `position: fixed`
+ * full-viewport layer — the single most expensive thing on the site. A blended
+ * fixed overlay forces the browser to composite everything beneath it into one
+ * layer and re-blend it on every frame of every scroll, which is precisely the
+ * cost FireStory was built to avoid. At 3% opacity the blend mode was doing no
+ * visible work, so it is gone.
+ *
+ * It is also skipped below 768px: on a phone the texture is imperceptible and
+ * the compositor budget is better spent on scrolling.
+ */
+@media (min-width: 768px) {
+  .grain::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
 }
 
 /* ============================================================
@@ -398,6 +476,77 @@ body {
 
 @keyframes spin-slow { to { transform: rotate(360deg); } }
 .spin-slow { animation: spin-slow 34s linear infinite; }
+
+/* ============================================================
+   CINEMATIC PAGE HERO
+   The inner pages used to be a headline beside a small rounded
+   photo on cream — correct, and completely forgettable. This is
+   a dark full-bleed plate instead: the page opens on fire and
+   food, then resolves into the light layout below.
+
+   Everything here is transform + opacity so it stays on the
+   compositor, and every animation ships its content already
+   visible (`backwards` fill, no JS gate) — a hero that needs
+   JavaScript to be readable is the one bug worth never having.
+   ============================================================ */
+
+/* Slow push-in. One-shot, not a loop: a hero that never settles
+   is a hero nobody can read. */
+@keyframes ken {
+  from { transform: scale(1.12) translate3d(0, 0, 0); }
+  to   { transform: scale(1)    translate3d(0, 0, 0); }
+}
+.ken {
+  animation: ken 20s var(--ease-out-expo) both;
+  will-change: transform;
+}
+
+/* Warm rim light along the bottom edge, so the dark plate hands
+   off to the cream page instead of stopping dead. */
+.hero-cine-glow {
+  background:
+    radial-gradient(72% 52% at 50% 104%,
+      rgba(255, 186, 84, 0.5), rgba(228, 87, 46, 0.22) 45%, rgba(228, 87, 46, 0) 76%);
+}
+
+/* Legibility scrim. A plain gradient — no `mix-blend-mode`, which
+   forces a full repaint of everything beneath it.
+
+   Two layers, because one is not enough on these images: the fire
+   frames have very bright flames, and white copy over a bright
+   flame at a light overlay fails contrast. The vertical layer sets
+   the mood; the horizontal one guarantees the left-aligned copy
+   column always has a dark ground under it whatever the photo is
+   doing. Measured worst case (white text over pure white image):
+   about 8:1 in the copy band. */
+.hero-cine-scrim {
+  background:
+    linear-gradient(90deg,
+      rgba(26, 13, 10, 0.72) 0%,
+      rgba(26, 13, 10, 0.34) 46%,
+      rgba(26, 13, 10, 0) 72%),
+    linear-gradient(180deg,
+      rgba(26, 13, 10, 0.78) 0%,
+      rgba(26, 13, 10, 0.40) 26%,
+      rgba(26, 13, 10, 0.70) 62%,
+      rgba(26, 13, 10, 0.92) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ken { animation: none !important; transform: none !important; }
+}
+@media (scripting: none) {
+  .ken { animation: none; transform: none; }
+}
+
+/* How far you scroll to play the fire sequence through, as a multiple of the
+   viewport. A phone screen is short, so 320svh there is roughly 2500px of
+   thumb work through one pinned panel — far too long. A custom property rather
+   than a Tailwind class because FireStory sets this as an inline height: the
+   section must never depend on a class being generated, or it collapses onto
+   its sticky child and the scrub silently stops working. */
+:root { --fire-runway: 220svh; }
+@media (min-width: 640px) { :root { --fire-runway: 320svh; } }
 
 :where(a, button, input, select, textarea):focus-visible {
   outline: 2px solid var(--color-crimson-500);

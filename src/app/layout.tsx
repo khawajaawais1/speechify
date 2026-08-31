@@ -51,7 +51,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     // on <body> it is undefined at that point, the whole token becomes invalid,
     // and every display heading silently falls back to the body sans.
     <html lang="fi" className={`${fraunces.variable} ${inter.variable}`} suppressHydrationWarning>
-      <body className="antialiased grain">
+      {/* suppressHydrationWarning: browser extensions (ColorZilla, Grammarly,
+          password managers) inject attributes onto <body> before React
+          hydrates — e.g. cz-shortcut-listen="true". Harmless, but React logs a
+          mismatch. This silences only <body>'s own attributes, not its
+          children, so genuine hydration bugs still surface. */}
+      <body className="antialiased grain" suppressHydrationWarning>
         {children}
       </body>
     </html>

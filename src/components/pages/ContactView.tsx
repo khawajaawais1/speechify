@@ -5,7 +5,7 @@ import { PageHero } from "../PageHero";
 import { Reveal } from "../Reveal";
 import { FacebookIcon, InstagramIcon } from "../Social";
 import { useLocale, useT } from "@/lib/useLocale";
-import { PHOTOS, SITE } from "@/data/site";
+import { HERO_ART, SITE } from "@/data/site";
 
 export function ContactView() {
   const t = useT();
@@ -14,12 +14,12 @@ export function ContactView() {
   const cards = [
     {
       Icon: MapPin,
-      title: locale === "fi" ? "Osoite" : "Address",
+      title: t("contact.address"),
       lines: [SITE.address.street, `${SITE.address.postal} ${SITE.address.city}`],
       href: SITE.maps,
     },
-    { Icon: Phone, title: locale === "fi" ? "Puhelin" : "Phone", lines: [SITE.phone], href: SITE.phoneHref },
-    { Icon: Mail, title: locale === "fi" ? "Sähköposti" : "Email", lines: [SITE.email], href: `mailto:${SITE.email}` },
+    { Icon: Phone, title: t("contact.phone"), lines: [SITE.phone], href: SITE.phoneHref },
+    { Icon: Mail, title: t("contact.emailLabel"), lines: [SITE.email], href: `mailto:${SITE.email}` },
   ];
 
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(
@@ -31,10 +31,8 @@ export function ContactView() {
       <PageHero
         eyebrow={t("nav.contact")}
         title={t("contact.title")}
-        sub={locale === "fi"
-          ? "Ahjokatu 12, Seppälä. Pysäköinti oven edessä. Tervetuloa."
-          : "Ahjokatu 12, Seppälä. Parking right outside. Come as you are."}
-        image={PHOTOS.interior2}
+        sub={t("contact.heroSub")}
+        image={HERO_ART.contact}
       />
 
       <div className="mx-auto max-w-[88rem] px-5 pb-24 sm:px-8">
@@ -98,12 +96,10 @@ export function ContactView() {
             <Reveal delay={0.1}>
               <div className="rounded-[2rem] border border-line bg-card p-7 shadow-card">
                 <p className="eyebrow flex items-center gap-2"><Smartphone className="h-3.5 w-3.5" />
-                  {locale === "fi" ? "Mobiilisovellus" : "Mobile app"}
+                  {t("contact.appTitle")}
                 </p>
                 <p className="mt-3 text-[0.86rem] leading-relaxed text-muted">
-                  {locale === "fi"
-                    ? "Tilaa vielä nopeammin sovelluksellamme — tarjoukset ja kupongit suoraan puhelimeen."
-                    : "Order even faster in our app — deals and coupons straight to your phone."}
+                  {t("contact.appBody")}
                 </p>
                 <div className="mt-5 flex gap-2">
                   <a href={SITE.apps.ios} target="_blank" rel="noreferrer"

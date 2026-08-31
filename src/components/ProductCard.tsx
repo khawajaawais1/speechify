@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { Check, Flame, Leaf, Plus, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Photo } from "./Photo";
+import { DishTile } from "./DishTile";
 import { useCart } from "@/lib/cart";
 import { useReveal } from "@/lib/reveal";
 import { useLocale, useT } from "@/lib/useLocale";
@@ -63,12 +64,22 @@ export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
       className="rv card-sheen group flex flex-col overflow-hidden rounded-3xl border border-line bg-card shadow-card transition-all duration-500 hover:-translate-y-1.5 hover:border-crimson-500/30 hover:shadow-lift"
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden">
+        {!p.img && <DishTile cat={p.cat} className="h-full w-full" />}
         {p.img && (
           <Photo
             src={p.img}
             alt={name}
-            className="h-full w-full"
-            imgClassName="transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.08]"
+            // A packshot is a tall can on a white studio ground. Filling a 4:3
+            // frame with it crops the lid and base away, so it is contained and
+            // padded instead, on white so the frame and the shot's own
+            // background read as one surface.
+            fit={p.packshot ? "contain" : "cover"}
+            grade={!p.packshot}
+            overlay={p.packshot ? "none" : "tint"}
+            className={`h-full w-full ${p.packshot ? "bg-white p-5" : ""}`}
+            imgClassName={`transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              p.packshot ? "group-hover:scale-[1.05]" : "group-hover:scale-[1.08]"
+            }`}
             sizes="(max-width:640px) 92vw, (max-width:1024px) 45vw, 30vw"
           />
         )}

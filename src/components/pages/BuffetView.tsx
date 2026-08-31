@@ -9,7 +9,7 @@ import { Reveal } from "../Reveal";
 import { Btn } from "../Button";
 import { useLocale, useT } from "@/lib/useLocale";
 import { EVERY_DAY, WEEK } from "@/data/buffet";
-import { PHOTOS, SITE } from "@/data/site";
+import { HERO_ART, SITE } from "@/data/site";
 import { money } from "@/lib/i18n";
 
 export function BuffetView() {
@@ -21,18 +21,32 @@ export function BuffetView() {
 
   return (
     <>
-      <PageHero eyebrow={t("sec.buffet.eyebrow")} title={t("buffet.title")} sub={t("buffet.sub")} image={PHOTOS.buffet1} />
+      <PageHero eyebrow={t("sec.buffet.eyebrow")} title={t("buffet.title")} sub={t("buffet.sub")} image={HERO_ART.buffet} />
 
       {/* Pricing */}
       <section className="mx-auto max-w-[88rem] px-5 sm:px-8">
-        <div className="grid gap-4 md:grid-cols-3">
+        {/* Four cards now that the weekday price splits at 15:00 — two up on a
+            tablet, four across on a desktop. Three-across would leave the
+            children's card orphaned on its own row. */}
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {[
-            { title: SITE.buffet.weekday.days[locale], price: SITE.buffet.weekday.price, time: SITE.buffet.weekday.time, hi: true },
-            { title: SITE.buffet.weekend.days[locale], price: SITE.buffet.weekend.price, time: "10:30 – 20:00 · 12:00 – 20:00" },
-            { title: locale === "fi" ? "Lapset" : "Children", price: null, time: SITE.buffet.kids.map((k) => `${k.label[locale]} ${money(k.price, locale)}`).join(" · ") },
+            ...SITE.buffet.tiers.map((tier) => ({
+              key: tier.id,
+              title: tier.days[locale],
+              price: tier.price as number | null,
+              time: tier.time[locale],
+              hi: tier.highlight,
+            })),
+            {
+              key: "kids",
+              title: t("buffet.children"),
+              price: null,
+              time: SITE.buffet.kids.map((k) => `${k.label[locale]} ${money(k.price, locale)}`).join(" · "),
+              hi: false,
+            },
           ].map((c, i) => (
             <Reveal
-              key={c.title}
+              key={c.key}
               delay={i * 0.09}
               className={`rounded-3xl border p-7 ${
                 c.hi ? "border-saffron-500/40 bg-saffron-100 shadow-card" : "border-line bg-card shadow-card"
@@ -40,8 +54,8 @@ export function BuffetView() {
             >
               <p className="eyebrow">{c.title}</p>
               {c.price != null && (
-                <p className="mt-3 font-display text-5xl font-semibold text-gradient-sun">
-                  {money(c.price, locale).replace(",00", "").replace(".00", "")}
+                <p className="mt-3 font-display text-4xl font-semibold text-gradient-sun sm:text-5xl">
+                  {money(c.price, locale)}
                 </p>
               )}
               <p className={`text-[0.82rem] text-muted ${c.price != null ? "mt-2" : "mt-3"}`}>{c.time}</p>
@@ -59,7 +73,7 @@ export function BuffetView() {
       {/* Weekly rotation */}
       <section className="mx-auto max-w-[88rem] px-5 py-20 sm:px-8">
         <h2 className="display-md text-ink">
-          {locale === "fi" ? "Viikon kierto" : "This week's rotation"}
+          {t("buffet.rotation")}
         </h2>
 
         <div className="mt-8 flex gap-1.5 overflow-x-auto pb-2">
@@ -115,13 +129,13 @@ export function BuffetView() {
 
           <aside className="space-y-4">
             <Photo
-              src={PHOTOS.buffet2}
+              src="/menu/salad-falafel.jpg"
               alt=""
               className="aspect-[4/3] w-full rounded-3xl border-4 border-white shadow-lift"
               sizes="(max-width:1024px) 92vw, 352px"
             />
             <div className="rounded-3xl border border-line bg-card p-6 shadow-card">
-              <p className="eyebrow">{locale === "fi" ? "Joka päivä pöydässä" : "On the table every day"}</p>
+              <p className="eyebrow">{t("buffet.everyDay")}</p>
               <ul className="mt-4 space-y-2.5">
                 {EVERY_DAY.map((d) => (
                   <li key={d.name} className="flex items-start gap-2.5 text-[0.82rem] text-ink-soft">
@@ -140,7 +154,7 @@ export function BuffetView() {
         <Reveal>
           <div className="bg-crimson-grad rounded-[2rem] px-8 py-12 text-center shadow-lift">
             <h3 className="display-md !text-white">
-              {locale === "fi" ? "Catering ja yksityistilaisuudet" : "Catering & private events"}
+              {t("buffet.catering")}
             </h3>
             <p className="mx-auto mt-3 max-w-lg text-[0.9rem] text-white/80">{t("sec.story.body2")}</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">

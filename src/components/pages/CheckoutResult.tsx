@@ -33,9 +33,7 @@ export function CheckoutResult({ kind }: { kind: "success" | "cancel" }) {
 
         {ok && (
           <p className="mt-6 rounded-2xl border border-line bg-canvas-2 px-5 py-4 text-[0.82rem] text-ink-soft">
-            {locale === "fi"
-              ? `Arvioitu aika ${SITE.order.etaMinutes} minuuttia. Saat kuitin sähköpostiisi. Kysyttävää? Soita ${SITE.phone}.`
-              : `Estimated time ${SITE.order.etaMinutes} minutes. A receipt is on its way to your inbox. Questions? Call ${SITE.phone}.`}
+            {t("checkout.etaLine", { min: SITE.order.etaMinutes, phone: SITE.phone })}
           </p>
         )}
 
