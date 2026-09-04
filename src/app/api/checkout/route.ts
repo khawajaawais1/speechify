@@ -141,6 +141,14 @@ export async function POST(req: Request) {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      // Left unset, Checkout falls back to the account's default payment
+      // method configuration, which ships with a grab-bag of regional
+      // methods switched on (Bancontact, EPS, MB WAY, BLIK, KakaoPay,
+      // NaverPay, Pix…) — none relevant to a Finnish restaurant. `card` also
+      // surfaces Apple Pay / Google Pay automatically as an express-checkout
+      // button when the browser and domain are eligible, so this is not a
+      // loss of those options.
+      payment_method_types: ["card"],
       line_items: lineItems,
       locale: locale === "fi" ? "fi" : "en",
       customer_creation: "always",
@@ -152,6 +160,7 @@ export async function POST(req: Request) {
         fulfilment: mode,
         note: (body.note ?? "").slice(0, 480),
         restaurant: SITE.fullName,
+        locale,
       },
       ...(mode === "delivery"
         ? {
@@ -164,7 +173,7 @@ export async function POST(req: Request) {
                   display_name:
                     deliveryFee === 0
                       ? locale === "fi" ? "Ilmainen kotiinkuljetus" : "Free delivery"
-                      : locale === "fi" ? "Kotiinkuljetus (enintään 7 km)" : "Delivery (up to 7 km)",
+                      : locale === "fi" ? "Kotiinkuljetus" : "Delivery",
                   delivery_estimate: {
                     minimum: { unit: "hour" as const, value: 1 },
                     maximum: { unit: "hour" as const, value: 1 },

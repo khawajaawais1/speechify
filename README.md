@@ -71,6 +71,45 @@ this site.
 catalogue**. Prices, delivery fees and order minimums sent by the browser are
 ignored. Tampering with the client cannot change what a customer is charged.
 
+### Order notifications (email + WhatsApp)
+
+`src/app/api/webhooks/stripe/route.ts` listens for Stripe's
+`checkout.session.completed` event — it fires server-side the moment payment
+is confirmed, not when the customer's browser happens to reach
+`/checkout/success`, which they may close immediately after paying. From
+there it emails the customer an order confirmation and pushes a WhatsApp
+alert to the restaurant.
+
+1. **Webhook signing secret** — locally, run
+   `stripe listen --forward-to localhost:3000/api/webhooks/stripe` and paste
+   the `whsec_…` it prints into `.env.local` as `STRIPE_WEBHOOK_SECRET`. In
+   production, create the endpoint in the Stripe dashboard
+   (**Developers → Webhooks**, event: `checkout.session.completed`) and use
+   its signing secret instead — the local one only works for `stripe listen`.
+2. **Email (SMTP)** — put your mailbox's SMTP host/port/user/password in
+   `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS`. `SMTP_FROM` is
+   optional and defaults to `SMTP_USER`. Leave these unset and the route logs
+   a warning and skips the email rather than failing the webhook.
+3. **WhatsApp (Meta Cloud API)** — create an app at
+   [developers.facebook.com](https://developers.facebook.com/docs/whatsapp/cloud-api/get-started),
+   then set `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID` and
+   `WHATSAPP_TO_NUMBER` (the restaurant's own number, digits only, country
+   code first, no `+`). Same fallback: missing config logs a warning and
+   skips the alert.
+
+**The 24-hour window.** WhatsApp's Cloud API only allows freeform text
+messages (what this sends) to a number that has messaged your business
+number within the last 24 hours. For a restaurant owner who set this up once
+and then goes quiet for a day or more, alerts will start silently failing —
+the fix is submitting an **approved message template** in Meta Business
+Manager, which can be sent any time regardless of that window, not a code
+change here.
+
+Because there is no database in this app, a Stripe retry (if your server is
+briefly down, say) has nothing to check against and could resend the same
+customer's email and WhatsApp alert. Low-stakes for a small restaurant's
+order volume, but worth knowing before this scales up.
+
 ## 3. Where things live
 
 ```
@@ -398,7 +437,7 @@ keeping either way.
 
 ## 10. Worth doing next
 
-- Stripe **webhook** (`checkout.session.completed`) to print tickets in the kitchen or email orders
 - Opening-hours guard so the shop closes itself outside delivery hours
 - Real reservation backend (the form currently opens a pre-filled email)
 - Swap the à la carte descriptions for photographed dish shots
+- A datastore to de-duplicate Stripe webhook retries (see the order-notifications note in §2) and to print kitchen tickets, not just notify

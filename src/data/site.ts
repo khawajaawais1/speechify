@@ -50,9 +50,13 @@ export const SITE = {
     minPickup: 10,
     minDelivery: 23,
     etaMinutes: 30,
+    // zones[1].fee is the flat fee for every delivery beyond the free radius —
+    // there is no upper distance limit (orders come from well past 7 km), so
+    // it deliberately carries no `km` upper bound. Don't reintroduce one in
+    // customer-facing copy.
     zones: [
       { km: 5, fee: 0 },
-      { km: 7, fee: 5 },
+      { fee: 5 },
     ],
   },
   /**

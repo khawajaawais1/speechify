@@ -58,7 +58,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="eyebrow mb-4">{t("nav.menu")}</h3>
+            <h3 className="eyebrow mb-4">{t("footer.quickLinks")}</h3>
             <ul className="space-y-2.5">
               {nav.map((l) => (
                 <li key={l.key}>

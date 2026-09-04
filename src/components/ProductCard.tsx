@@ -146,6 +146,8 @@ export function MenuRow({ p, index = 0 }: { p: Product; index?: number }) {
 
   const name = (locale === "fi" && p.nameFi) || p.name;
   const desc = (locale === "fi" && p.descFi) || p.desc;
+  const price = effectivePrice(p);
+  const hasOffer = p.offer != null && p.offer < p.price;
 
   return (
     <li
@@ -158,8 +160,20 @@ export function MenuRow({ p, index = 0 }: { p: Product; index?: number }) {
             {name}
           </h3>
           <span className="hidden h-px flex-1 translate-y-[-2px] bg-[repeating-linear-gradient(90deg,rgba(220,195,159,.9)_0_3px,transparent_3px_7px)] sm:block" />
-          <span className="font-display text-base font-semibold tabular-nums text-crimson-600">
-            {money(effectivePrice(p), locale)}
+          <span className="flex shrink-0 items-baseline gap-1.5">
+            {hasOffer && (
+              <span className="text-[0.72rem] leading-none text-faint line-through">
+                {money(p.price, locale)}
+              </span>
+            )}
+            <span className="font-display text-base font-semibold tabular-nums text-crimson-600">
+              {money(price, locale)}
+            </span>
+            {hasOffer && (
+              <span className="bg-crimson-grad inline-flex items-center rounded-full px-1.5 py-0.5 text-[0.58rem] font-black uppercase tracking-wider text-white">
+                −{Math.round((1 - p.offer! / p.price) * 100)}%
+              </span>
+            )}
           </span>
         </div>
         <p className="mt-1.5 max-w-2xl text-[0.83rem] leading-relaxed text-muted">{desc}</p>

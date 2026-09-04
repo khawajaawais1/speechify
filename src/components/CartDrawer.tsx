@@ -210,7 +210,7 @@ export function CartDrawer() {
 
                 {/* Summary */}
                 <div className="border-t border-line bg-card px-6 py-5 shadow-[0_-8px_24px_-16px_rgba(93,52,32,.25)]">
-                  {c.freeDeliveryGap > 0 && (
+                  {c.meetsMinimum && c.freeDeliveryGap > 0 && (
                     <div className="mb-3 overflow-hidden rounded-xl border border-saffron-500/30 bg-saffron-100 px-3 py-2">
                       <p className="text-[0.72rem] font-medium text-saffron-700">
                         {t("cart.freeHint", { amount: money(c.freeDeliveryGap, locale) })}
@@ -307,7 +307,7 @@ export function CartBar() {
           exit={{ y: 90, opacity: 0 }}
           transition={{ type: "spring", stiffness: 340, damping: 32 }}
           onClick={() => c.setOpen(true)}
-          className="fixed inset-x-4 bottom-4 z-[62] flex items-center justify-between gap-4 rounded-full border border-crimson-500/40 bg-card/95 px-5 py-3.5 shadow-lift backdrop-blur-xl sm:hidden"
+          className="bg-crimson-grad fixed inset-x-4 bottom-4 z-[62] flex items-center justify-between gap-4 rounded-full px-5 py-3.5 shadow-lift sm:hidden"
         >
           <span className="flex items-center gap-2 text-sm font-bold text-white">
             <ShoppingBag className="h-4 w-4" />

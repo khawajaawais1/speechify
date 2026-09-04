@@ -54,7 +54,7 @@ export function ShopView() {
       <div className="mx-auto max-w-[88rem] px-5 sm:px-8">
         <div className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line shadow-card sm:grid-cols-3">
           {[
-            { k: t("shop.deliveryLabel"), v: `0–5 km ${t("cart.free")} · 7 km ${money(5, locale)}` },
+            { k: t("shop.deliveryLabel"), v: `0–5 km ${t("cart.free")} · ${money(5, locale)} ${t("shop.beyond")}` },
             { k: t("shop.minLabel"), v: `${t("cart.pickup")} ${money(SITE.order.minPickup, locale)} · ${t("cart.deliver")} ${money(SITE.order.minDelivery, locale)}` },
             { k: t("shop.etaLabel"), v: `${SITE.order.etaMinutes} min` },
           ].map((x) => (
